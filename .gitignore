@@ -1,0 +1,44 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+*.egg
+
+# Build / Distribution
+dist/
+build/
+
+# Virtual environments
+.venv/
+venv/
+env/
+
+# Testing / Linting
+.pytest_cache/
+.coverage
+htmlcov/
+.mypy_cache/
+.ruff_cache/
+
+# Editors / IDEs
+.idea/
+.vscode/
+*.swp
+*~
+
+# AI agents
+.claude/
+.cursor/
+.codex/
+.gemini/
+.aider/
+.continue/
+.windsurf/
+
+# OS
+.DS_Store
+Thumbs.db
+Desktop.ini
+
+# Project
+*.db

@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>omon — Ollama Monitor</title>
+  <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+
+<header>
+  <h1>omon <span>· Ollama Monitor</span></h1>
+  <div class="hw-info" id="hw-info"></div>
+</header>
+
+<div class="container">
+
+  <!-- Top cards row -->
+  <div class="top-cards">
+    <div class="card" id="status-card">
+      <div class="card-title">Server</div>
+      <div id="status-content"><div class="empty">Loading...</div></div>
+    </div>
+    <div class="card" id="memory-card">
+      <div class="card-title">Memory</div>
+      <div id="memory-content"><div class="empty">Loading...</div></div>
+    </div>
+    <div class="card" id="disk-card">
+      <div class="card-title">Disk</div>
+      <div id="disk-content"><div class="empty">Loading...</div></div>
+    </div>
+  </div>
+
+  <!-- Active models (live) -->
+  <div class="section">
+    <div class="card">
+      <div class="card-title">Active Models <span id="running-count"></span></div>
+      <div id="running-content"><div class="empty">No models loaded</div></div>
+    </div>
+  </div>
+
+  <!-- Models list -->
+  <div class="section">
+    <div class="models-header">
+      <input type="text" class="search-input" id="model-search" placeholder="Search models...">
+      <select class="cap-filter" id="cap-filter">
+        <option value="">All capabilities</option>
+        <option value="vision">Vision</option>
+        <option value="thinking">Thinking</option>
+        <option value="tools">Tool use</option>
+        <option value="embedding">Embedding</option>
+      </select>
+    </div>
+    <div id="models-content"><div class="empty">Loading models...</div></div>
+  </div>
+
+  <!-- Benchmarks -->
+  <div class="section">
+    <div class="card">
+      <div class="card-title">Benchmarks</div>
+      <div id="bench-content"><div class="empty">No benchmarks yet. Run: omon bench &lt;model&gt;</div></div>
+    </div>
+  </div>
+
+</div>
+
+<footer>omon v0.5.0 — local-first Ollama monitoring</footer>
+
+<script src="/app.js"></script>
+</body>
+</html>

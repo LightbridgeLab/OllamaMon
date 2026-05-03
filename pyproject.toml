@@ -1,0 +1,43 @@
+[build-system]
+requires = ["setuptools>=68.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "omon"
+version = "0.5.0"
+description = "A simple, local-first monitoring and management tool for Ollama"
+readme = "README.md"
+license = "MIT"
+requires-python = ">=3.10"
+dependencies = []
+authors = [{name = "Sebastien Taggart"}]
+keywords = ["ollama", "llm", "monitoring", "cli"]
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Programming Language :: Python :: 3.14",
+    "License :: OSI Approved :: MIT License",
+    "Environment :: Console",
+    "Topic :: System :: Monitoring",
+    "Operating System :: OS Independent",
+]
+
+[project.urls]
+Homepage = "https://github.com/LightbridgeLab/OllamaMon"
+Repository = "https://github.com/LightbridgeLab/OllamaMon"
+Issues = "https://github.com/LightbridgeLab/OllamaMon/issues"
+
+[project.scripts]
+omon = "omon.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.package-data]
+omon = ["data/*.json", "web/static/*"]
+
+[project.optional-dependencies]
+dev = ["pytest>=7.0"]

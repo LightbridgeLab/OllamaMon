@@ -1,0 +1,384 @@
+{
+  "_comment": "Mapping of Ollama model families to HuggingFace source models, descriptions, and metadata. Community-maintained. Last updated: 2026-04-22.",
+  "_format": {
+    "huggingface_base": "HuggingFace org/repo prefix (append size variant for full ID)",
+    "description": "One-line plain-English description of the model family",
+    "publisher": "Organization that created the model",
+    "tasks": "What the model is designed for: general, coding, math, vision, embedding, etc.",
+    "license": "SPDX identifier or short name",
+    "successor": "Ollama name of the recommended newer model, if any",
+    "notes": "Anything else worth knowing"
+  },
+  "models": {
+    "llama2": {
+      "huggingface_base": "meta-llama/Llama-2",
+      "description": "Meta's second-generation open LLM, strong general-purpose performance",
+      "publisher": "Meta",
+      "tasks": ["general", "chat"],
+      "license": "Llama 2 Community",
+      "successor": "llama3.3",
+      "notes": "Largely superseded by Llama 3.x in all benchmarks"
+    },
+    "llama3": {
+      "huggingface_base": "meta-llama/Meta-Llama-3",
+      "description": "Meta's third-generation LLM with improved reasoning and instruction following",
+      "publisher": "Meta",
+      "tasks": ["general", "chat", "coding"],
+      "license": "Llama 3 Community",
+      "successor": "llama3.1"
+    },
+    "llama3.1": {
+      "huggingface_base": "meta-llama/Meta-Llama-3.1",
+      "description": "Extended Llama 3 with 128K context and tool use support",
+      "publisher": "Meta",
+      "tasks": ["general", "chat", "coding", "tools"],
+      "license": "Llama 3.1 Community",
+      "successor": "llama3.3"
+    },
+    "llama3.2": {
+      "huggingface_base": "meta-llama/Llama-3.2",
+      "description": "Lightweight Llama models (1B/3B) plus multimodal vision variants (11B/90B)",
+      "publisher": "Meta",
+      "tasks": ["general", "chat", "vision"],
+      "license": "Llama 3.2 Community",
+      "notes": "1B and 3B are text-only; 11B and 90B add vision capabilities"
+    },
+    "llama3.3": {
+      "huggingface_base": "meta-llama/Llama-3.3",
+      "description": "Latest Llama text model, 70B with performance rivaling larger models",
+      "publisher": "Meta",
+      "tasks": ["general", "chat", "coding", "tools"],
+      "license": "Llama 3.3 Community"
+    },
+    "codellama": {
+      "huggingface_base": "meta-llama/CodeLlama",
+      "description": "Code-specialized Llama 2 fine-tune for code generation and understanding",
+      "publisher": "Meta",
+      "tasks": ["coding"],
+      "license": "Llama 2 Community",
+      "successor": "qwen2.5-coder",
+      "notes": "Superseded by newer coding models (Qwen2.5-Coder, DeepSeek-Coder-V2)"
+    },
+    "mistral": {
+      "huggingface_base": "mistralai/Mistral-7B",
+      "description": "Efficient 7B model with sliding window attention, strong for its size",
+      "publisher": "Mistral AI",
+      "tasks": ["general", "chat"],
+      "license": "Apache-2.0",
+      "successor": "mistral-small"
+    },
+    "mixtral": {
+      "huggingface_base": "mistralai/Mixtral-8x7B",
+      "description": "Mixture-of-experts model: 47B total params, 13B active per token",
+      "publisher": "Mistral AI",
+      "tasks": ["general", "chat", "coding"],
+      "license": "Apache-2.0",
+      "successor": "mixtral:8x22b",
+      "notes": "First widely popular open MoE model"
+    },
+    "mistral-small": {
+      "huggingface_base": "mistralai/Mistral-Small-24B",
+      "description": "24B dense model, Mistral's recommended small model for most tasks",
+      "publisher": "Mistral AI",
+      "tasks": ["general", "chat", "coding"],
+      "license": "Apache-2.0"
+    },
+    "mistral-large": {
+      "huggingface_base": "mistralai/Mistral-Large",
+      "description": "Mistral's flagship 123B model for complex reasoning",
+      "publisher": "Mistral AI",
+      "tasks": ["general", "chat", "coding", "tools"],
+      "license": "Mistral Research"
+    },
+    "phi3": {
+      "huggingface_base": "microsoft/Phi-3",
+      "description": "Microsoft's compact model family, strong performance relative to size",
+      "publisher": "Microsoft",
+      "tasks": ["general", "chat"],
+      "license": "MIT",
+      "successor": "phi4"
+    },
+    "phi4": {
+      "huggingface_base": "microsoft/phi-4",
+      "description": "Microsoft's 14B model with reasoning focus, trained on synthetic data",
+      "publisher": "Microsoft",
+      "tasks": ["general", "chat", "math", "coding"],
+      "license": "MIT"
+    },
+    "gemma": {
+      "huggingface_base": "google/gemma",
+      "description": "Google's lightweight open model built from Gemini research",
+      "publisher": "Google",
+      "tasks": ["general", "chat"],
+      "license": "Gemma",
+      "successor": "gemma2"
+    },
+    "gemma2": {
+      "huggingface_base": "google/gemma-2",
+      "description": "Second-gen Gemma with improved quality at 2B, 9B, and 27B sizes",
+      "publisher": "Google",
+      "tasks": ["general", "chat"],
+      "license": "Gemma",
+      "successor": "gemma3"
+    },
+    "gemma3": {
+      "huggingface_base": "google/gemma-3",
+      "description": "Third-gen Gemma with vision support and 128K context",
+      "publisher": "Google",
+      "tasks": ["general", "chat", "vision"],
+      "license": "Gemma"
+    },
+    "codegemma": {
+      "huggingface_base": "google/codegemma",
+      "description": "Code-specialized Gemma for generation, completion, and understanding",
+      "publisher": "Google",
+      "tasks": ["coding"],
+      "license": "Gemma"
+    },
+    "qwen": {
+      "huggingface_base": "Qwen/Qwen",
+      "description": "Alibaba's first-gen multilingual LLM (Chinese/English focus)",
+      "publisher": "Alibaba / Qwen Team",
+      "tasks": ["general", "chat"],
+      "license": "Tongyi Qianwen",
+      "successor": "qwen2.5"
+    },
+    "qwen2": {
+      "huggingface_base": "Qwen/Qwen2",
+      "description": "Second-gen Qwen with improved multilingual and coding ability",
+      "publisher": "Alibaba / Qwen Team",
+      "tasks": ["general", "chat", "coding"],
+      "license": "Apache-2.0",
+      "successor": "qwen2.5"
+    },
+    "qwen2.5": {
+      "huggingface_base": "Qwen/Qwen2.5",
+      "description": "Strong all-round model family from 0.5B to 72B, competitive with Llama 3",
+      "publisher": "Alibaba / Qwen Team",
+      "tasks": ["general", "chat", "coding", "math"],
+      "license": "Apache-2.0",
+      "successor": "qwen3"
+    },
+    "qwen2.5-coder": {
+      "huggingface_base": "Qwen/Qwen2.5-Coder",
+      "description": "Code-specialized Qwen2.5, top open coding model at multiple sizes",
+      "publisher": "Alibaba / Qwen Team",
+      "tasks": ["coding"],
+      "license": "Apache-2.0"
+    },
+    "qwen3": {
+      "huggingface_base": "Qwen/Qwen3",
+      "description": "Third-gen Qwen with hybrid thinking (can toggle chain-of-thought on/off)",
+      "publisher": "Alibaba / Qwen Team",
+      "tasks": ["general", "chat", "coding", "math", "tools", "thinking"],
+      "license": "Apache-2.0"
+    },
+    "qwen3.5": {
+      "huggingface_base": "Qwen/Qwen3.5",
+      "description": "Latest Qwen MoE models with vision and thinking support",
+      "publisher": "Alibaba / Qwen Team",
+      "tasks": ["general", "chat", "coding", "vision", "thinking", "tools"],
+      "license": "Apache-2.0",
+      "notes": "MoE architecture — e.g. 35B total / 3B active means fast inference despite large param count"
+    },
+    "deepseek-coder": {
+      "huggingface_base": "deepseek-ai/deepseek-coder",
+      "description": "Code-focused model trained on 2T tokens of code data",
+      "publisher": "DeepSeek",
+      "tasks": ["coding"],
+      "license": "DeepSeek",
+      "successor": "deepseek-coder-v2"
+    },
+    "deepseek-coder-v2": {
+      "huggingface_base": "deepseek-ai/DeepSeek-Coder-V2",
+      "description": "MoE coding model, 236B total / 21B active, strong on code and math",
+      "publisher": "DeepSeek",
+      "tasks": ["coding", "math"],
+      "license": "DeepSeek"
+    },
+    "deepseek-v2": {
+      "huggingface_base": "deepseek-ai/DeepSeek-V2",
+      "description": "Large MoE model with Multi-head Latent Attention for efficiency",
+      "publisher": "DeepSeek",
+      "tasks": ["general", "chat", "coding"],
+      "license": "DeepSeek"
+    },
+    "deepseek-r1": {
+      "huggingface_base": "deepseek-ai/DeepSeek-R1",
+      "description": "Reasoning model trained with reinforcement learning, excels at math and logic",
+      "publisher": "DeepSeek",
+      "tasks": ["math", "coding", "thinking"],
+      "license": "MIT",
+      "notes": "671B MoE (37B active). Distilled versions available at smaller sizes."
+    },
+    "command-r": {
+      "huggingface_base": "CohereForAI/c4ai-command-r",
+      "description": "Cohere's RAG-optimized model with grounded generation and tool use",
+      "publisher": "Cohere",
+      "tasks": ["general", "chat", "tools"],
+      "license": "CC-BY-NC-4.0",
+      "successor": "command-r-plus"
+    },
+    "command-r-plus": {
+      "huggingface_base": "CohereForAI/c4ai-command-r-plus",
+      "description": "Larger Command-R (104B) for complex RAG and multi-step tool use",
+      "publisher": "Cohere",
+      "tasks": ["general", "chat", "tools"],
+      "license": "CC-BY-NC-4.0"
+    },
+    "starcoder2": {
+      "huggingface_base": "bigcode/starcoder2",
+      "description": "Code model trained on The Stack v2, available at 3B, 7B, 15B",
+      "publisher": "BigCode",
+      "tasks": ["coding"],
+      "license": "BigCode OpenRAIL-M"
+    },
+    "yi": {
+      "huggingface_base": "01-ai/Yi",
+      "description": "Bilingual (English/Chinese) model from 01.AI, available up to 34B",
+      "publisher": "01.AI",
+      "tasks": ["general", "chat"],
+      "license": "Apache-2.0"
+    },
+    "vicuna": {
+      "huggingface_base": "lmsys/vicuna",
+      "description": "LLaMA fine-tuned on ShareGPT conversations, early open chat model",
+      "publisher": "LMSYS",
+      "tasks": ["chat"],
+      "license": "Llama 2 Community",
+      "successor": "llama3.3",
+      "notes": "Historically significant but outperformed by modern models"
+    },
+    "solar": {
+      "huggingface_base": "upstage/SOLAR-10.7B",
+      "description": "Upstage's depth-upscaled model, 10.7B from merged Llama/Mistral layers",
+      "publisher": "Upstage",
+      "tasks": ["general", "chat"],
+      "license": "Apache-2.0"
+    },
+    "nous-hermes2": {
+      "huggingface_base": "NousResearch/Nous-Hermes-2",
+      "description": "Community fine-tune focused on instruction following and helpfulness",
+      "publisher": "Nous Research",
+      "tasks": ["general", "chat"],
+      "license": "Apache-2.0"
+    },
+    "dolphin-mixtral": {
+      "huggingface_base": "cognitivecomputations/dolphin-2.5-mixtral-8x7b",
+      "description": "Uncensored Mixtral fine-tune for unrestricted conversation",
+      "publisher": "Cognitive Computations",
+      "tasks": ["general", "chat"],
+      "license": "Apache-2.0",
+      "notes": "Intentionally has no alignment/refusal training"
+    },
+    "openchat": {
+      "huggingface_base": "openchat/openchat-3.5",
+      "description": "Chat model using C-RLFT (conditioned reinforcement learning fine-tuning)",
+      "publisher": "OpenChat",
+      "tasks": ["chat"],
+      "license": "Apache-2.0"
+    },
+    "zephyr": {
+      "huggingface_base": "HuggingFaceH4/zephyr-7b-beta",
+      "description": "Mistral-based chat model aligned with DPO, HuggingFace's reference model",
+      "publisher": "HuggingFace",
+      "tasks": ["chat"],
+      "license": "MIT"
+    },
+    "tinyllama": {
+      "huggingface_base": "TinyLlama/TinyLlama-1.1B-Chat-v1.0",
+      "description": "Compact 1.1B model trained on 3T tokens, good for constrained environments",
+      "publisher": "TinyLlama",
+      "tasks": ["general", "chat"],
+      "license": "Apache-2.0"
+    },
+    "falcon": {
+      "huggingface_base": "tiiuae/falcon",
+      "description": "TII's early open model, available at 7B, 40B, 180B",
+      "publisher": "Technology Innovation Institute",
+      "tasks": ["general"],
+      "license": "Apache-2.0",
+      "notes": "Largely superseded by newer model families"
+    },
+    "granite": {
+      "huggingface_base": "ibm-granite/granite",
+      "description": "IBM's enterprise-focused model family, strong on code and business tasks",
+      "publisher": "IBM",
+      "tasks": ["general", "coding"],
+      "license": "Apache-2.0"
+    },
+    "llava": {
+      "huggingface_base": "liuhaotian/llava-v1.6",
+      "description": "Visual instruction-tuned model — understands images and answers questions about them",
+      "publisher": "LLaVA Team",
+      "tasks": ["vision", "chat"],
+      "license": "Apache-2.0",
+      "successor": "llama3.2"
+    },
+    "nomic-embed-text": {
+      "huggingface_base": "nomic-ai/nomic-embed-text-v1.5",
+      "description": "Text embedding model with 8K context, good for RAG and semantic search",
+      "publisher": "Nomic AI",
+      "tasks": ["embedding"],
+      "license": "Apache-2.0"
+    },
+    "all-minilm": {
+      "huggingface_base": "sentence-transformers/all-MiniLM-L6-v2",
+      "description": "Lightweight sentence embedding model, fast and widely used for similarity",
+      "publisher": "Sentence Transformers",
+      "tasks": ["embedding"],
+      "license": "Apache-2.0"
+    },
+    "snowflake-arctic-embed": {
+      "huggingface_base": "Snowflake/snowflake-arctic-embed-l",
+      "description": "High-quality text embedding model optimized for retrieval",
+      "publisher": "Snowflake",
+      "tasks": ["embedding"],
+      "license": "Apache-2.0"
+    },
+    "mxbai-embed-large": {
+      "huggingface_base": "mixedbread-ai/mxbai-embed-large-v1",
+      "description": "State-of-the-art embedding model for retrieval and similarity tasks",
+      "publisher": "Mixedbread AI",
+      "tasks": ["embedding"],
+      "license": "Apache-2.0"
+    },
+    "wizardlm2": {
+      "huggingface_base": "WizardLMTeam/WizardLM-2",
+      "description": "Instruction-tuned model focused on complex instruction following",
+      "publisher": "WizardLM Team",
+      "tasks": ["general", "chat"],
+      "license": "Apache-2.0"
+    },
+    "wizardcoder": {
+      "huggingface_base": "WizardLMTeam/WizardCoder",
+      "description": "Code-focused Evol-Instruct fine-tune, multiple base model variants",
+      "publisher": "WizardLM Team",
+      "tasks": ["coding"],
+      "license": "Llama 2 Community",
+      "successor": "qwen2.5-coder"
+    },
+    "internlm2": {
+      "huggingface_base": "internlm/internlm2",
+      "description": "Shanghai AI Lab's multilingual model with strong reasoning",
+      "publisher": "Shanghai AI Lab",
+      "tasks": ["general", "chat", "math"],
+      "license": "Apache-2.0"
+    },
+    "glm4": {
+      "huggingface_base": "THUDM/glm-4",
+      "description": "Tsinghua's bilingual model with tool use and code capabilities",
+      "publisher": "Tsinghua / Zhipu AI",
+      "tasks": ["general", "chat", "coding", "tools"],
+      "license": "Apache-2.0"
+    },
+    "smollm2": {
+      "huggingface_base": "HuggingFaceTB/SmolLM2",
+      "description": "Ultra-compact models (135M to 1.7B) for on-device and constrained use",
+      "publisher": "HuggingFace",
+      "tasks": ["general"],
+      "license": "Apache-2.0",
+      "notes": "Designed for edge devices, phones, and resource-limited environments"
+    }
+  }
+}
