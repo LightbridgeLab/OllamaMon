@@ -121,8 +121,8 @@ Make omon installable via common package managers beyond pip/pipx.
 
 | Channel | Type | Review Required | Notes |
 |---|---|---|---|
-| **PyPI** | Foundation | No | Enables `pipx install omon`. Set up Trusted Publishing via GitHub Actions OIDC — no API tokens to manage. |
-| **Homebrew tap** | Self-hosted | No | Personal repo `homebrew-omon` with a single `Formula/omon.rb`. Users: `brew tap user/omon && brew install omon`. |
+| **PyPI** | Foundation | No | Done — `pipx install omon` via Trusted Publishing (OIDC). |
+| **Homebrew tap** | Self-hosted | No | Done — `homebrew-omon/` in repo; publish to `LightbridgeLab/homebrew-omon`. Users: `brew tap LightbridgeLab/omon && brew install omon`. |
 | **AUR** | Community | No | `PKGBUILD` + `.SRCINFO` pushed to aur.archlinux.org. Live immediately. |
 | **Nix flake** | In-repo | No | `flake.nix` in project root. Users: `nix profile install github:user/omon`. |
 | **conda-forge** | PR-based | Yes (1-2 weeks) | Submit recipe to `conda-forge/staged-recipes`. After merge, bot auto-bumps on new PyPI releases. |

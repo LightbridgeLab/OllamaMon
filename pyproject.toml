@@ -28,6 +28,7 @@ classifiers = [
 Homepage = "https://github.com/LightbridgeLab/OllamaMon"
 Repository = "https://github.com/LightbridgeLab/OllamaMon"
 Issues = "https://github.com/LightbridgeLab/OllamaMon/issues"
+Documentation = "https://github.com/LightbridgeLab/OllamaMon/blob/main/REFERENCE.md"
 
 [project.scripts]
 omon = "omon.cli:main"
