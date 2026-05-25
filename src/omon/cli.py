@@ -377,7 +377,8 @@ def cmd_serve(args: argparse.Namespace) -> int:
 
     host = _get_host(args)
     port = getattr(args, "port", 11435)
-    run_server(port=port, ollama_host=host)
+    bind = getattr(args, "bind", "127.0.0.1")
+    run_server(port=port, ollama_host=host, bind=bind)
     return 0
 
 
@@ -533,6 +534,7 @@ def cmd_config(args: argparse.Namespace) -> int:
         print(f"  no_pager      {cfg.no_pager}")
         print(f"  watch.interval {cfg.watch_interval}s")
         print(f"  serve.port    {cfg.serve_port}")
+        print(f"  serve.bind    {cfg.serve_bind}")
         print(f"  cleanup.days  {cfg.stale_days}")
         if not exists:
             print(f"\nRun 'omon config --init' to create the config file.")
@@ -616,6 +618,12 @@ def _build_parser() -> argparse.ArgumentParser:
     # serve
     serve_parser = sub.add_parser("serve", parents=[shared], help="Start web dashboard")
     serve_parser.add_argument("--port", type=int, default=11435, help="Port (default: 11435)")
+    serve_parser.add_argument(
+        "--bind",
+        default="127.0.0.1",
+        metavar="ADDR",
+        help="Address to bind (default: 127.0.0.1; use 0.0.0.0 for LAN access)",
+    )
 
     # hw
     sub.add_parser("hw", parents=[shared], help="Show hardware profile and model sizing guide")
@@ -655,8 +663,11 @@ def main() -> None:
         args.json = True
     if not getattr(args, "no_pager", False) and cfg.no_pager:
         args.no_pager = True
-    if args.command == "serve" and getattr(args, "port", 11435) == 11435:
-        args.port = cfg.serve_port
+    if args.command == "serve":
+        if getattr(args, "port", 11435) == 11435:
+            args.port = cfg.serve_port
+        if getattr(args, "bind", "127.0.0.1") == "127.0.0.1":
+            args.bind = cfg.serve_bind
     if args.command == "cleanup" and getattr(args, "days", 30) == 30:
         args.days = cfg.stale_days
 

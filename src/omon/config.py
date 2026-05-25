@@ -19,6 +19,7 @@ class Config:
     watch_interval: int = 2
     # serve
     serve_port: int = 11435
+    serve_bind: str = "127.0.0.1"
     # cleanup
     stale_days: int = 30
 
@@ -97,6 +98,8 @@ def load_config() -> Config:
     serve = data.get("serve", {})
     if "port" in serve:
         cfg.serve_port = int(serve["port"])
+    if "bind" in serve:
+        cfg.serve_bind = str(serve["bind"])
 
     cleanup = data.get("cleanup", {})
     if "stale_days" in cleanup:
@@ -121,6 +124,7 @@ def generate_default_config() -> str:
 
 [serve]
 # port = 11435
+# bind = "127.0.0.1"
 
 [cleanup]
 # stale_days = 30

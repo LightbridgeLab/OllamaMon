@@ -1,5 +1,7 @@
 # omon — Ollama Monitor
 
+> **Status:** Original design document. Phases 1–4 are implemented (v0.5.0). Phase 5 (distribution polish) and `external.py` are deferred — see [ROADMAP.md](ROADMAP.md).
+
 A simple, local-first, privacy-focused monitoring and management tool for Ollama.
 
 **Command name:** `omon` (not `ollama-mon` — shorter, no autocomplete collision with `ollama` commands)
@@ -267,7 +269,7 @@ omon/
 │       ├── formatter.py         # Terminal output formatting (ANSI)
 │       ├── bench.py             # Benchmarking logic
 │       ├── store.py             # SQLite metrics storage
-│       ├── external.py          # External API clients (Phase 4)
+│       ├── external.py          # External API clients (planned — see ROADMAP.md)
 │       ├── tui/
 │       │   ├── __init__.py
 │       │   └── watch.py         # curses live view

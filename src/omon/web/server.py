@@ -290,13 +290,27 @@ class OmonHandler(BaseHTTPRequestHandler):
             self.send_error(404)
 
 
-def run_server(port: int = 11435, ollama_host: str = DEFAULT_HOST) -> None:
+DEFAULT_BIND = "127.0.0.1"
+
+
+def run_server(
+    port: int = 11435,
+    ollama_host: str = DEFAULT_HOST,
+    bind: str = DEFAULT_BIND,
+) -> None:
     """Start the web dashboard server."""
     OmonHandler.ollama_host = ollama_host
     OmonHandler.static_dir = _static_path()
 
-    server = HTTPServer(("0.0.0.0", port), OmonHandler)
-    print(f"omon dashboard running at http://localhost:{port}")
+    if bind in ("0.0.0.0", "::"):
+        print(
+            "Warning: dashboard is reachable on all network interfaces with no authentication.",
+            file=sys.stderr,
+        )
+
+    server = HTTPServer((bind, port), OmonHandler)
+    display_host = "localhost" if bind in ("127.0.0.1", "::1") else bind
+    print(f"omon dashboard running at http://{display_host}:{port}")
     print(f"Monitoring Ollama at {ollama_host}")
     print("Press Ctrl+C to stop")
 

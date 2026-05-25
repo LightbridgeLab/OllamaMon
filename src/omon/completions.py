@@ -45,7 +45,7 @@ _omon_completions() {{
         --task)
             COMPREPLY=($(compgen -W "{tasks}" -- "${{cur}}"))
             return ;;
-        --host|--port|--days|--compare)
+        --host|--port|--bind|--days|--compare)
             return ;;
         show|info)
             # Complete with installed model names
@@ -113,7 +113,7 @@ _omon() {{
                     _arguments '--task[Task type]:task:({tasks})'
                     ;;
                 serve)
-                    _arguments '--port[Port number]:port:'
+                    _arguments '--port[Port number]:port:' '--bind[Bind address]:address:'
                     ;;
                 cleanup)
                     _arguments '--days[Stale threshold]:days:'
@@ -170,6 +170,7 @@ def fish_completion() -> str:
         f"complete -c omon -n '__fish_seen_subcommand_from list ls' -l cap -x -a '{caps}' -d 'Filter by capability'",
         f"complete -c omon -n '__fish_seen_subcommand_from suggest' -l task -x -a '{tasks}' -d 'Task type'",
         "complete -c omon -n '__fish_seen_subcommand_from serve' -l port -x -d 'Port number'",
+        "complete -c omon -n '__fish_seen_subcommand_from serve' -l bind -x -d 'Bind address'",
         "complete -c omon -n '__fish_seen_subcommand_from cleanup' -l days -x -d 'Stale threshold'",
         "complete -c omon -n '__fish_seen_subcommand_from config' -l init -d 'Create default config'",
         "",
