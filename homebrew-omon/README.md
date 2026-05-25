@@ -16,26 +16,8 @@ brew update
 brew upgrade omon
 ```
 
-## Publish this tap (maintainers)
+## For maintainers
 
-This directory is the source for the **`LightbridgeLab/homebrew-omon`** GitHub repository (required name for `brew tap LightbridgeLab/omon`).
+The formula source lives in [`homebrew-omon/`](https://github.com/LightbridgeLab/OllamaMon/tree/main/homebrew-omon) inside the OllamaMon repository. This repository is what Homebrew serves to users via `brew tap`.
 
-### First-time setup
-
-```bash
-cd homebrew-omon
-git init
-git add Formula/omon.rb README.md
-git commit -m "feat: initial omon formula"
-gh repo create LightbridgeLab/homebrew-omon --public --source=. --push
-```
-
-### Update formula for a new release
-
-From the **OllamaMon** repo root after tagging `vX.Y.Z`:
-
-```bash
-./scripts/update-homebrew-formula.sh X.Y.Z
-```
-
-Then commit and push in the `homebrew-omon` clone, or let the GitHub Action update the tap automatically (see [PUBLISHING.md](../PUBLISHING.md)).
+Release workflow: [PUBLISHING.md](https://github.com/LightbridgeLab/OllamaMon/blob/main/PUBLISHING.md#homebrew-tap).

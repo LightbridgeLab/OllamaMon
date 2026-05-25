@@ -49,23 +49,41 @@ brew tap LightbridgeLab/omon
 brew install omon
 ```
 
+### Repository layout
+
+The Homebrew formula is maintained in two places:
+
+| Repo | Role |
+|------|------|
+| **[OllamaMon](https://github.com/LightbridgeLab/OllamaMon)** | [`homebrew-omon/`](homebrew-omon/) holds the formula template and tap README. Edit and commit these files with the main project. |
+| **[homebrew-omon](https://github.com/LightbridgeLab/homebrew-omon)** | Homebrew clones this repo for `brew tap LightbridgeLab/omon`. Updated on each release by CI, or manually with `make homebrew-push`. |
+
 ### One-time tap setup
 
-1. Create the public repo **`LightbridgeLab/homebrew-omon`** (exact name required for `brew tap LightbridgeLab/omon`).
-2. Push the contents of [`homebrew-omon/`](homebrew-omon/) to that repo:
+Create the public repo **`LightbridgeLab/homebrew-omon`** (required name for `brew tap LightbridgeLab/omon`):
 
-   ```bash
-   cd homebrew-omon
-   git init
-   git add Formula/omon.rb README.md
-   git commit -m "feat: initial omon formula"
-   gh repo create LightbridgeLab/homebrew-omon --public --source=. --push
-   ```
+```bash
+# from OllamaMon repo root
+cp -r homebrew-omon /tmp/homebrew-omon-tap
+cd /tmp/homebrew-omon-tap
+git init
+git add Formula/omon.rb README.md
+git commit -m "feat: initial omon formula"
+gh repo create LightbridgeLab/homebrew-omon --public --source=. --push
+```
 
-3. Optional — auto-update formula on each GitHub Release:
-   - Create a fine-grained PAT with **Contents: Read and write** on `homebrew-omon` only.
-   - Add it to this repo as secret **`HOMEBREW_TAP_TOKEN`**.
-   - The [`homebrew.yml`](.github/workflows/homebrew.yml) workflow runs on `release: published`.
+For manual updates, keep a clone of the tap repo and pass its path to `make homebrew-push`:
+
+```bash
+git clone https://github.com/LightbridgeLab/homebrew-omon.git ../homebrew-omon
+make homebrew-push HOMEBREW_TAP_DIR=../homebrew-omon
+```
+
+To update the tap automatically on each GitHub Release:
+
+- Fine-grained PAT with **Contents: Read and write** on `homebrew-omon`
+- Add to **OllamaMon** as secret **`HOMEBREW_TAP_TOKEN`**
+- [`homebrew.yml`](.github/workflows/homebrew.yml) runs on `release: published`
 
 ### Manual formula bump
 
@@ -87,6 +105,6 @@ Or run `make release` for the full PyPI + Homebrew checklist.
 |------|-------------|
 | **Auto-bump tap on release** | [`homebrew.yml`](.github/workflows/homebrew.yml) when you publish a GitHub Release and `HOMEBREW_TAP_TOKEN` is set |
 | **Local formula preview** | `make homebrew-formula` (updates `homebrew-omon/Formula/omon.rb` in this repo only) |
-| **Manual tap push** | `make homebrew-push` if you skip the secret or the workflow failed |
+| **Manual tap push** | `make homebrew-push` |
 
-Do **not** hook `homebrew-formula` into `bump-patch` / `_release-commit` — the GitHub tag must exist before the tarball URL and `sha256` are valid.
+Do **not** hook `homebrew-formula` into `bump-patch` / `_release-commit` — the GitHub tag must exist on the remote before the tarball URL and `sha256` can be computed.
