@@ -21,6 +21,22 @@
 - **Know what to run** — hardware-aware suggestions, successor alerts, cleanup recommendations for stale models
 - **Local-first, zero dependencies** — Python stdlib only. No venv conflicts, no supply chain risk, no cloud calls
 
+## Screenshots
+
+Click an image for full size.
+
+**Status overview** (`omon`)
+
+[![omon status overview — click for full size](https://github.com/LightbridgeLab/OllamaMon/raw/main/assets/screenshots/overview.png)](https://github.com/LightbridgeLab/OllamaMon/raw/main/assets/screenshots/overview.png)
+
+**Live TUI** (`omon watch`)
+
+[![omon live TUI — click for full size](https://github.com/LightbridgeLab/OllamaMon/raw/main/assets/screenshots/watch.png)](https://github.com/LightbridgeLab/OllamaMon/raw/main/assets/screenshots/watch.png)
+
+**Web dashboard** (`omon serve`)
+
+[![omon web dashboard — click for full size](https://github.com/LightbridgeLab/OllamaMon/raw/main/assets/screenshots/web.png)](https://github.com/LightbridgeLab/OllamaMon/raw/main/assets/screenshots/web.png)
+
 ## Install
 
 Pick one — you only need a single install path.
