@@ -92,6 +92,7 @@ homebrew-push: homebrew-formula ## Copy formula to tap clone and push (HOMEBREW_
 		exit 1; \
 	}
 	@V="$${V:-$$($(MAKE) -s version)}"; \
+	git -C "$(HOMEBREW_TAP_DIR)" pull --rebase origin main; \
 	cp homebrew-omon/Formula/omon.rb "$(HOMEBREW_TAP_DIR)/Formula/omon.rb"; \
 	cp homebrew-omon/README.md "$(HOMEBREW_TAP_DIR)/README.md"; \
 	cd "$(HOMEBREW_TAP_DIR)" && \
