@@ -1,4 +1,4 @@
-.PHONY: help install dev watch test check clean abandon merge deploy-preview deploy-prod version bump-patch bump-minor bump-major set-version
+.PHONY: help install dev watch test check clean abandon merge deploy-preview deploy-prod version bump-patch bump-minor bump-major set-version homebrew-formula homebrew-push release
 .DEFAULT_GOAL := help
 
 BRANCH_PROD := main
@@ -68,6 +68,43 @@ deploy-prod: _ensure-venv ## Build release artifacts (publish via GitHub Release
 	@ls dist/
 	@echo ""
 	@echo "Publish: tag v$$(make -s version), push, then create a GitHub Release (see PUBLISHING.md)."
+	@echo "Homebrew: automatic on GitHub Release if HOMEBREW_TAP_TOKEN is set; else 'make homebrew-push' after push --tags."
+
+# ── Homebrew tap ──────────────────────────────────────────────────────────────
+# Auto-bump on release: .github/workflows/homebrew.yml (needs HOMEBREW_TAP_TOKEN).
+# Makefile targets are for local preview or manual fallback after the tag is on GitHub.
+
+homebrew-formula: ## Regenerate Formula/omon.rb (V=x.y.z or current; tag must exist on GitHub)
+	@V="$${V:-$$($(MAKE) -s version)}"; \
+	./scripts/update-homebrew-formula.sh "$$V"
+
+# Path to a git clone of github.com/LightbridgeLab/homebrew-omon
+HOMEBREW_TAP_DIR ?= ../homebrew-omon
+
+homebrew-push: homebrew-formula ## Copy formula to tap clone and push (set HOMEBREW_TAP_DIR)
+	@test -d "$(HOMEBREW_TAP_DIR)/.git" || { \
+		echo "error: HOMEBREW_TAP_DIR must be a clone of LightbridgeLab/homebrew-omon (got '$(HOMEBREW_TAP_DIR)')" >&2; \
+		exit 1; \
+	}
+	@V="$${V:-$$($(MAKE) -s version)}"; \
+	cp homebrew-omon/Formula/omon.rb "$(HOMEBREW_TAP_DIR)/Formula/omon.rb"; \
+	cd "$(HOMEBREW_TAP_DIR)" && \
+		git add Formula/omon.rb && \
+		git diff --cached --quiet && { echo "tap formula unchanged"; exit 0; } || \
+		(git commit -m "omon $$V" && git push); \
+	echo "Pushed homebrew formula for v$$V"
+
+release: ## Print release checklist (version, PyPI, Homebrew)
+	@V=$$($(MAKE) -s version); \
+	echo "Release v$$V"; \
+	echo ""; \
+	echo "  1. make check && make deploy-prod"; \
+	echo "  2. make bump-patch   # or bump-minor / bump-major"; \
+	echo "  3. git push && git push --tags"; \
+	echo "  4. gh release create v$$V --generate-notes   # triggers PyPI + Homebrew CI"; \
+	echo "  5. If no HOMEBREW_TAP_TOKEN: make homebrew-push HOMEBREW_TAP_DIR=../homebrew-omon"; \
+	echo ""; \
+	echo "See PUBLISHING.md for PyPI trusted publisher and tap setup."
 
 # ── Versioning ────────────────────────────────────────────────────────────────
 
