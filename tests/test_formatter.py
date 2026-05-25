@@ -119,9 +119,10 @@ class TestFormatAge:
 
     def test_nanosecond_precision(self):
         # Ollama sometimes returns nanosecond timestamps
-        ts = datetime.now(timezone.utc) - timedelta(days=1)
-        nano_ts = ts.strftime("%Y-%m-%dT%H:%M:%S") + ".123456789+00:00"
-        assert format_age(nano_ts) == "1 day ago"
+        base = "2024-06-01T12:00:00"
+        micro = base + ".123456+00:00"
+        nano = base + ".123456789+00:00"
+        assert format_age(nano) == format_age(micro)
 
 
 # ─── _fmt_ms ─────────────────────────────────────────────

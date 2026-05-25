@@ -1,4 +1,4 @@
-.PHONY: help install dev watch test check clean abandon merge deploy-preview deploy-prod version bump-patch bump-minor bump-major set-version homebrew-formula homebrew-push release
+.PHONY: help install dev watch test check clean abandon merge deploy-preview deploy-prod version bump-patch bump-minor bump-major set-version homebrew-formula homebrew-push homebrew-tap-clone release
 .DEFAULT_GOAL := help
 
 BRANCH_PROD := main
@@ -74,25 +74,31 @@ deploy-prod: _ensure-venv ## Build release artifacts (publish via GitHub Release
 # Auto-bump on release: .github/workflows/homebrew.yml (needs HOMEBREW_TAP_TOKEN).
 # Makefile targets are for local preview or manual fallback after the tag is on GitHub.
 
+HOMEBREW_TAP_REPO ?= LightbridgeLab/homebrew-omon
+HOMEBREW_TAP_DIR  ?= ../OllamaMon_Homebrew_Tap
+
+homebrew-tap-clone: ## Clone or update local tap repo (HOMEBREW_TAP_DIR)
+	@chmod +x scripts/homebrew-tap-clone.sh
+	@HOMEBREW_TAP_REPO="$(HOMEBREW_TAP_REPO)" HOMEBREW_TAP_DIR="$(HOMEBREW_TAP_DIR)" \
+		./scripts/homebrew-tap-clone.sh
+
 homebrew-formula: ## Regenerate Formula/omon.rb (V=x.y.z or current; tag must exist on GitHub)
 	@V="$${V:-$$($(MAKE) -s version)}"; \
 	./scripts/update-homebrew-formula.sh "$$V"
 
-# Path to a git clone of github.com/LightbridgeLab/homebrew-omon
-HOMEBREW_TAP_DIR ?= ../homebrew-omon
-
-homebrew-push: homebrew-formula ## Copy formula to tap clone and push (set HOMEBREW_TAP_DIR)
+homebrew-push: homebrew-formula ## Copy formula to tap clone and push (HOMEBREW_TAP_DIR)
 	@test -d "$(HOMEBREW_TAP_DIR)/.git" || { \
-		echo "error: HOMEBREW_TAP_DIR must be a clone of LightbridgeLab/homebrew-omon (got '$(HOMEBREW_TAP_DIR)')" >&2; \
+		echo "error: run 'make homebrew-tap-clone' first (expected clone at '$(HOMEBREW_TAP_DIR)')" >&2; \
 		exit 1; \
 	}
 	@V="$${V:-$$($(MAKE) -s version)}"; \
 	cp homebrew-omon/Formula/omon.rb "$(HOMEBREW_TAP_DIR)/Formula/omon.rb"; \
+	cp homebrew-omon/README.md "$(HOMEBREW_TAP_DIR)/README.md"; \
 	cd "$(HOMEBREW_TAP_DIR)" && \
-		git add Formula/omon.rb && \
-		git diff --cached --quiet && { echo "tap formula unchanged"; exit 0; } || \
+		git add Formula/omon.rb README.md && \
+		git diff --cached --quiet && { echo "tap unchanged"; exit 0; } || \
 		(git commit -m "omon $$V" && git push); \
-	echo "Pushed homebrew formula for v$$V"
+	echo "Pushed homebrew tap for v$$V"
 
 release: ## Print release checklist (version, PyPI, Homebrew)
 	@V=$$($(MAKE) -s version); \
@@ -102,7 +108,7 @@ release: ## Print release checklist (version, PyPI, Homebrew)
 	echo "  2. make bump-patch   # or bump-minor / bump-major"; \
 	echo "  3. git push && git push --tags"; \
 	echo "  4. gh release create v$$V --generate-notes   # triggers PyPI + Homebrew CI"; \
-	echo "  5. If no HOMEBREW_TAP_TOKEN: make homebrew-push HOMEBREW_TAP_DIR=../homebrew-omon"; \
+	echo "  5. CI fallback: make homebrew-push V=$$V"; \
 	echo ""; \
 	echo "See PUBLISHING.md for PyPI trusted publisher and tap setup."
 

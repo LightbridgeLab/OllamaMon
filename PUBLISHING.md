@@ -58,46 +58,34 @@ The Homebrew formula is maintained in two places:
 | **[OllamaMon](https://github.com/LightbridgeLab/OllamaMon)** | [`homebrew-omon/`](homebrew-omon/) holds the formula template and tap README. Edit and commit these files with the main project. |
 | **[homebrew-omon](https://github.com/LightbridgeLab/homebrew-omon)** | Homebrew clones this repo for `brew tap LightbridgeLab/omon`. Updated on each release by CI, or manually with `make homebrew-push`. |
 
-### One-time tap setup
-
-Create the public repo **`LightbridgeLab/homebrew-omon`** (required name for `brew tap LightbridgeLab/omon`):
+### One-time maintainer setup
 
 ```bash
-# from OllamaMon repo root
-cp -r homebrew-omon /tmp/homebrew-omon-tap
-cd /tmp/homebrew-omon-tap
-git init
-git add Formula/omon.rb README.md
-git commit -m "feat: initial omon formula"
-gh repo create LightbridgeLab/homebrew-omon --public --source=. --push
+make homebrew-tap-clone
 ```
 
-For manual updates, keep a clone of the tap repo and pass its path to `make homebrew-push`:
+Add **`HOMEBREW_TAP_TOKEN`** to OllamaMon repo secrets (fine-grained PAT with **Contents: Read and write** on `homebrew-omon`).
+
+Default local clone path: `../OllamaMon_Homebrew_Tap` (override with `HOMEBREW_TAP_DIR`).
+
+### Each release
+
+Publish a GitHub Release — CI updates PyPI and the tap via [`homebrew.yml`](.github/workflows/homebrew.yml).
+
+Or run `make release` for the full checklist.
+
+### Manual tap push (CI fallback)
+
+After the tag is on GitHub:
 
 ```bash
-git clone https://github.com/LightbridgeLab/homebrew-omon.git ../homebrew-omon
-make homebrew-push HOMEBREW_TAP_DIR=../homebrew-omon
+make homebrew-formula V=x.y.z    # optional: refresh formula in OllamaMon
+make homebrew-push V=x.y.z       # push to local tap clone
 ```
 
-To update the tap automatically on each GitHub Release:
+Use explicit `V=` when `pyproject.toml` differs from the released tag.
 
-- Fine-grained PAT with **Contents: Read and write** on `homebrew-omon`
-- Add to **OllamaMon** as secret **`HOMEBREW_TAP_TOKEN`**
-- [`homebrew.yml`](.github/workflows/homebrew.yml) runs on `release: published`
-
-### Manual formula bump
-
-After the tag is **pushed to GitHub** (the script downloads the release tarball):
-
-```bash
-make homebrew-formula              # uses version from pyproject.toml
-make homebrew-formula V=0.5.1      # explicit version
-
-# push to your tap clone (default: ../homebrew-omon)
-make homebrew-push HOMEBREW_TAP_DIR=../homebrew-omon
-```
-
-Or run `make release` for the full PyPI + Homebrew checklist.
+To update the tap without re-publishing a release: **Actions** → **Update Homebrew formula** → **Run workflow** → enter the version (e.g. `0.6.2`).
 
 ### Makefile vs GitHub Actions
 
