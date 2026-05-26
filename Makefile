@@ -120,43 +120,21 @@ version: ## Print current version
 	@python3 -c "import tomllib; print(tomllib.load(open('pyproject.toml','rb'))['project']['version'])"
 
 bump-patch: ## Bump patch version, commit, and tag (0.5.0 → 0.5.1)
-	@V=$$(python3 -c "\
-		import tomllib; \
-		v = tomllib.load(open('pyproject.toml','rb'))['project']['version'].split('.'); \
-		v[2] = str(int(v[2])+1); \
-		print('.'.join(v))"); \
+	@V=$$(python3 -c "import tomllib; v = tomllib.load(open('pyproject.toml','rb'))['project']['version'].split('.'); v[2] = str(int(v[2])+1); print('.'.join(v))"); \
 	$(MAKE) _release-commit V=$$V
 
 bump-minor: ## Bump minor version, commit, and tag (0.5.0 → 0.6.0)
-	@V=$$(python3 -c "\
-		import tomllib; \
-		v = tomllib.load(open('pyproject.toml','rb'))['project']['version'].split('.'); \
-		v[1] = str(int(v[1])+1); v[2] = '0'; \
-		print('.'.join(v))"); \
+	@V=$$(python3 -c "import tomllib; v = tomllib.load(open('pyproject.toml','rb'))['project']['version'].split('.'); v[1] = str(int(v[1])+1); v[2] = '0'; print('.'.join(v))"); \
 	$(MAKE) _release-commit V=$$V
 
 bump-major: ## Bump major version, commit, and tag (0.5.0 → 1.0.0)
-	@V=$$(python3 -c "\
-		import tomllib; \
-		v = tomllib.load(open('pyproject.toml','rb'))['project']['version'].split('.'); \
-		v[0] = str(int(v[0])+1); v[1] = '0'; v[2] = '0'; \
-		print('.'.join(v))"); \
+	@V=$$(python3 -c "import tomllib; v = tomllib.load(open('pyproject.toml','rb'))['project']['version'].split('.'); v[0] = str(int(v[0])+1); v[1] = '0'; v[2] = '0'; print('.'.join(v))"); \
 	$(MAKE) _release-commit V=$$V
 
 set-version: ## Set version to V=x.y.z (pyproject.toml + src/omon/__init__.py)
 	@if [ -z "$(V)" ]; then echo "error: usage: make set-version V=x.y.z" >&2; exit 1; fi
 	@echo "$(V)" | grep -qE '^[0-9]+\.[0-9]+\.[0-9]+$$' || { echo "error: invalid version '$(V)'" >&2; exit 1; }
-	@python3 -c "\
-		import re, pathlib; \
-		v = '$(V)'; \
-		files = [ \
-		    (pathlib.Path('pyproject.toml'), r'version = \".*?\"', f'version = \"{v}\"'), \
-		    (pathlib.Path('src/omon/__init__.py'), r'__version__ = \".*?\"', f'__version__ = \"{v}\"'), \
-		]; \
-		[ \
-		    p.write_text(re.sub(pat, repl, p.read_text(), count=1)) \
-		    for p, pat, repl in files \
-		]"
+	@python3 -c "import re, pathlib; v = '$(V)'; files = [(pathlib.Path('pyproject.toml'), r'version = \".*?\"', f'version = \"{v}\"'), (pathlib.Path('src/omon/__init__.py'), r'__version__ = \".*?\"', f'__version__ = \"{v}\"')]; [p.write_text(re.sub(pat, repl, p.read_text(), count=1)) for p, pat, repl in files]"
 	@echo "Version set to $(V)"
 
 _release-commit:
