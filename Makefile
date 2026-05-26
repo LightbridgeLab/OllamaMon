@@ -1,4 +1,4 @@
-.PHONY: help install dev watch test check clean abandon merge deploy-preview deploy-prod version bump-patch bump-minor bump-major set-version homebrew-formula homebrew-push homebrew-tap-clone
+.PHONY: help install dev run serve watch test check clean abandon merge deploy-preview deploy-prod version bump-patch bump-minor bump-major set-version homebrew-formula homebrew-push homebrew-tap-clone
 .DEFAULT_GOAL := help
 
 BRANCH_PROD := main
@@ -23,14 +23,27 @@ install: ## Create .venv and install package with dev extras
 	@test -d $(VENV) || python3 -m venv $(VENV)
 	$(PIP) install -e ".[dev]"
 
-dev: install ## Run web dashboard (omon serve)
+dev: install ## Show common local test commands (Code Cannon DEV_CMD)
+	@echo "Local omon from .venv — use these while developing:"
+	@echo "  make run ARGS='list'          # decoded inventory"
+	@echo "  make run ARGS='watch'         # live TUI"
+	@echo "  make serve                    # web dashboard → http://127.0.0.1:11435"
+	@echo "  make run ARGS='bench MODEL'   # benchmark"
+	@echo ""
+	@echo "Shell 'omon' may be pipx/Homebrew; make targets use .venv/bin/omon."
+
+run: install ## Run omon subcommand (ARGS='watch' or ARGS='list --json')
+	@if [ -z "$(ARGS)" ]; then echo "error: usage: make run ARGS='...'" >&2; exit 1; fi
+	$(OMON) $(ARGS)
+
+serve: install ## Start web dashboard
 	@echo "Web dashboard: http://127.0.0.1:11435 (Ctrl+C to stop)"
 	$(OMON) serve
 
-watch: install ## Run live monitoring TUI (omon watch)
-	$(OMON) watch
+watch: ## Run live monitoring TUI (alias for make run ARGS=watch)
+	@$(MAKE) run ARGS=watch
 
-test: _ensure-venv ## Run test suite (matches CI)
+test: install ## Run test suite (matches CI)
 	$(PYTEST) -v
 
 check: ## Full quality gate: tests
@@ -57,17 +70,30 @@ merge: ## Merge current branch's PR into main
 	gh pr merge --merge --delete-branch
 
 deploy-preview: ## Deploy to preview (not configured)
-	@echo "No preview deployment — omon is a local CLI; use 'make dev' or 'make watch' to run locally."
+	@echo "No preview deployment — omon is a local CLI. Run 'make dev' for local test commands."
 
-deploy-prod: _ensure-venv ## Test, build, push, and publish (run after make bump-*)
+deploy-prod: _ensure-venv ## Test, build, commit, tag, push, and publish (run after make bump-*)
 	@$(MAKE) check
 	$(PIP) install -q build
 	$(PYTHON) -m build
 	@V=$$($(MAKE) -s version); \
-	git rev-parse "v$$V" >/dev/null 2>&1 || { \
-		echo "error: no tag v$$V — run 'make bump-patch' (or bump-minor / bump-major) first" >&2; \
-		exit 1; \
-	}; \
+	LTAG=$$(git tag -l 'v[0-9]*.[0-9]*.[0-9]*' --sort=-version:refname 2>/dev/null | head -n1); \
+	if [ -n "$$LTAG" ]; then \
+		LV=$${LTAG#v}; \
+		if [ "$$V" = "$$LV" ] && git diff --quiet HEAD -- pyproject.toml src/omon/__init__.py; then \
+			if gh release view "v$$V" >/dev/null 2>&1; then \
+				echo "error: v$$V is already released — run make bump-patch, bump-minor, or bump-major first" >&2; \
+				exit 1; \
+			fi; \
+		fi; \
+	fi; \
+	git add pyproject.toml src/omon/__init__.py; \
+	if ! git diff --cached --quiet; then \
+		git commit -m "chore: release v$$V"; \
+	fi; \
+	if ! git rev-parse "v$$V" >/dev/null 2>&1; then \
+		git tag -a "v$$V" -m "Release v$$V"; \
+	fi; \
 	echo "Publishing v$$V..."; \
 	git push && git push --tags; \
 	gh release create "v$$V" --generate-notes; \
@@ -109,28 +135,23 @@ homebrew-push: homebrew-formula ## Copy formula to tap clone and push (HOMEBREW_
 version: ## Print current version
 	@python3 -c "import tomllib; print(tomllib.load(open('pyproject.toml','rb'))['project']['version'])"
 
-bump-patch: ## Bump patch version, commit, and tag (0.5.0 → 0.5.1)
+bump-patch: ## Bump patch version in pyproject.toml and __init__.py (0.5.0 → 0.5.1)
 	@V=$$(python3 -c "import tomllib; v = tomllib.load(open('pyproject.toml','rb'))['project']['version'].split('.'); v[2] = str(int(v[2])+1); print('.'.join(v))"); \
-	$(MAKE) _release-commit V=$$V
+	$(MAKE) set-version V=$$V; \
+	echo "Bumped to v$$V — run: make deploy-prod"
 
-bump-minor: ## Bump minor version, commit, and tag (0.5.0 → 0.6.0)
+bump-minor: ## Bump minor version in pyproject.toml and __init__.py (0.5.0 → 0.6.0)
 	@V=$$(python3 -c "import tomllib; v = tomllib.load(open('pyproject.toml','rb'))['project']['version'].split('.'); v[1] = str(int(v[1])+1); v[2] = '0'; print('.'.join(v))"); \
-	$(MAKE) _release-commit V=$$V
+	$(MAKE) set-version V=$$V; \
+	echo "Bumped to v$$V — run: make deploy-prod"
 
-bump-major: ## Bump major version, commit, and tag (0.5.0 → 1.0.0)
+bump-major: ## Bump major version in pyproject.toml and __init__.py (0.5.0 → 1.0.0)
 	@V=$$(python3 -c "import tomllib; v = tomllib.load(open('pyproject.toml','rb'))['project']['version'].split('.'); v[0] = str(int(v[0])+1); v[1] = '0'; v[2] = '0'; print('.'.join(v))"); \
-	$(MAKE) _release-commit V=$$V
+	$(MAKE) set-version V=$$V; \
+	echo "Bumped to v$$V — run: make deploy-prod"
 
 set-version: ## Set version to V=x.y.z (pyproject.toml + src/omon/__init__.py)
 	@if [ -z "$(V)" ]; then echo "error: usage: make set-version V=x.y.z" >&2; exit 1; fi
 	@echo "$(V)" | grep -qE '^[0-9]+\.[0-9]+\.[0-9]+$$' || { echo "error: invalid version '$(V)'" >&2; exit 1; }
 	@python3 -c "import re, pathlib; v = '$(V)'; files = [(pathlib.Path('pyproject.toml'), r'version = \".*?\"', f'version = \"{v}\"'), (pathlib.Path('src/omon/__init__.py'), r'__version__ = \".*?\"', f'__version__ = \"{v}\"')]; [p.write_text(re.sub(pat, repl, p.read_text(), count=1)) for p, pat, repl in files]"
 	@echo "Version set to $(V)"
-
-_release-commit:
-	@$(MAKE) set-version V=$(V)
-	@git add pyproject.toml src/omon/__init__.py
-	@git diff --cached --quiet && { echo "error: nothing to commit after version bump" >&2; exit 1; } || true
-	@git commit -m "chore: release v$(V)"
-	@git tag -a "v$(V)" -m "Release v$(V)"
-	@echo "Tagged v$(V) — run: make deploy-prod"

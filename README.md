@@ -76,6 +76,28 @@ omon watch                    # live TUI (press q to quit)
 
 More commands: `omon hw`, `omon suggest --task coding`, `omon cleanup`, `omon serve`.
 
+## Developing from source
+
+```bash
+git clone https://github.com/LightbridgeLab/OllamaMon.git && cd OllamaMon
+make install
+make dev              # common local test commands
+make check            # run tests
+```
+
+See [AGENTS.md](https://github.com/LightbridgeLab/OllamaMon/blob/main/AGENTS.md) for architecture rules and the pipx/Homebrew vs `.venv` note.
+
+## Developing from source
+
+```bash
+git clone https://github.com/LightbridgeLab/OllamaMon.git && cd OllamaMon
+make install
+make dev              # common local test commands
+make check            # run tests
+```
+
+See [AGENTS.md](https://github.com/LightbridgeLab/OllamaMon/blob/main/AGENTS.md) for architecture rules and the pipx/Homebrew vs `.venv` note.
+
 ## Documentation
 
 - [Command reference](https://github.com/LightbridgeLab/OllamaMon/blob/main/REFERENCE.md) — full docs for every command, config, and completions

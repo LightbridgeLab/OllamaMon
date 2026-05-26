@@ -46,6 +46,22 @@ Test dependencies (pytest, etc.) are allowed in `[project.optional-dependencies.
 - **Errors are messages, not stack traces.** If Ollama isn't running, print "Ollama is not running at localhost:11434" and exit 1. Don't dump a ConnectionRefusedError traceback.
 - **No global state.** Pass config/state through function arguments.
 
+## Developing from source
+
+Clone the repo, then use the Makefile — it installs an editable build into `.venv` and always runs `.venv/bin/omon`, not whatever is on your `PATH`.
+
+```bash
+make install          # .venv + pip install -e ".[dev]"
+make dev              # print common local test commands
+make check            # pytest (same gate as CI)
+make run ARGS='list'  # any omon subcommand
+make serve            # web dashboard
+```
+
+If you also have `omon` via pipx or Homebrew, bare `omon` in a shell is that global install. To test repo changes, use `make run` / `make serve`, `.venv/bin/omon`, or `pipx install -e .` from the clone. No need to uninstall pipx/brew for day-to-day work.
+
+Release workflow for maintainers: [PUBLISHING.md](PUBLISHING.md).
+
 ## Testing
 
 - Tests use `pytest` (dev dependency only).

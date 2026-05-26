@@ -21,11 +21,11 @@ make bump-patch                     # or bump-minor / bump-major
 make deploy-prod
 ```
 
-`make bump-patch` updates `pyproject.toml` and `src/omon/__init__.py`, commits them, and creates tag `vX.Y.Z`.
+`make bump-patch` only updates `pyproject.toml` and `src/omon/__init__.py` (no git operations).
 
-`make deploy-prod` runs tests, builds the wheel, pushes to GitHub, and creates the GitHub Release. That triggers `publish.yml` (PyPI) and `homebrew.yml` (tap).
+`make deploy-prod` runs tests, builds the wheel, commits the version bump, tags, pushes, and creates the GitHub Release. That triggers `publish.yml` (PyPI) and `homebrew.yml` (tap). It stops early if the version matches the latest release and you forgot `make bump-*` (unless a previous deploy failed before the GitHub Release was created).
 
-Commit anything else **before** bumping — bump only stages the two version files.
+Commit anything else **before** `make deploy-prod` — deploy only commits the two version files.
 
 ## Verify locally
 
@@ -96,4 +96,4 @@ To update the tap without re-publishing a release: **Actions** → **Update Home
 | **Local formula preview** | `make homebrew-formula` (updates `homebrew-omon/Formula/omon.rb` in this repo only) |
 | **Manual tap push** | `make homebrew-push` |
 
-Do **not** hook `homebrew-formula` into `bump-patch` / `_release-commit` — the GitHub tag must exist on the remote before the tarball URL and `sha256` can be computed.
+Do **not** hook `homebrew-formula` into `deploy-prod` — the GitHub tag must exist on the remote before the tarball URL and `sha256` can be computed.
