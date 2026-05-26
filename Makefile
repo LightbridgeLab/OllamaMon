@@ -105,11 +105,12 @@ release: ## Print release checklist (version, PyPI, Homebrew)
 	@V=$$($(MAKE) -s version); \
 	echo "Release v$$V"; \
 	echo ""; \
-	echo "  1. make check && make deploy-prod"; \
-	echo "  2. make bump-patch   # or bump-minor / bump-major"; \
-	echo "  3. git push && git push --tags"; \
-	echo "  4. gh release create v$$V --generate-notes   # triggers PyPI + Homebrew CI"; \
-	echo "  5. CI fallback: make homebrew-push V=$$V"; \
+	echo "  1. make check && make deploy-prod   # optional smoke test"; \
+	echo "  2. git commit pending changes       # if any; bump only touches pyproject.toml + src/omon/__init__.py"; \
+	echo "  3. make bump-patch                  # or bump-minor / bump-major; commits version + tag"; \
+	echo "  4. git push && git push --tags"; \
+	echo "  5. gh release create v$$V --generate-notes   # triggers PyPI + Homebrew CI"; \
+	echo "  6. CI fallback: make homebrew-push V=$$V"; \
 	echo ""; \
 	echo "See PUBLISHING.md for PyPI trusted publisher and tap setup."
 

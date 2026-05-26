@@ -15,14 +15,21 @@ PyPI publishing is automated via GitHub Actions when you create a GitHub Release
 
 ## Publish a release
 
+Run `make release` for the full checklist. Typical flow:
+
 ```bash
-git tag v0.5.0
-git push origin v0.5.0
+make check                          # optional: make deploy-prod for a local wheel smoke test
+git add -A && git commit -m "..."   # only if you have pending changes (see below)
+make bump-patch                     # or bump-minor / bump-major
+git push && git push --tags
+gh release create v0.6.3 --generate-notes
 ```
 
-Then on GitHub: **Releases** → **Draft a new release** → select tag `v0.5.0` → **Publish release**.
+`make bump-patch` (and minor/major) updates `pyproject.toml` and `src/omon/__init__.py`, **commits** them as `chore: release vX.Y.Z`, and **creates the annotated tag**. You do not need a separate commit for the version bump.
 
-The `publish.yml` workflow builds and uploads to PyPI using OIDC (no API token stored in GitHub secrets).
+Commit anything else **before** bumping — `_release-commit` only stages those two version files.
+
+Creating the GitHub Release triggers `publish.yml` (PyPI via OIDC) and `homebrew.yml` (tap update when `HOMEBREW_TAP_TOKEN` is set).
 
 ## Verify locally
 
@@ -70,9 +77,12 @@ Default local clone path: `../OllamaMon_Homebrew_Tap` (override with `HOMEBREW_T
 
 ### Each release
 
-Publish a GitHub Release — CI updates PyPI and the tap via [`homebrew.yml`](.github/workflows/homebrew.yml).
+1. Commit pending changes on `main` (if any).
+2. `make bump-patch` — version commit + tag (no separate `git commit` for the bump).
+3. `git push && git push --tags`
+4. `gh release create vX.Y.Z --generate-notes` — CI updates PyPI and the tap via [`homebrew.yml`](.github/workflows/homebrew.yml).
 
-Or run `make release` for the full checklist.
+Or run `make release` for the numbered checklist.
 
 ### Manual tap push (CI fallback)
 
