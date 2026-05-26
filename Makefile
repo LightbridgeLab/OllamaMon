@@ -1,4 +1,4 @@
-.PHONY: help install dev watch test check clean abandon merge deploy-preview deploy-prod version bump-patch bump-minor bump-major set-version homebrew-formula homebrew-push homebrew-tap-clone release
+.PHONY: help install dev watch test check clean abandon merge deploy-preview deploy-prod version bump-patch bump-minor bump-major set-version homebrew-formula homebrew-push homebrew-tap-clone
 .DEFAULT_GOAL := help
 
 BRANCH_PROD := main
@@ -59,16 +59,19 @@ merge: ## Merge current branch's PR into main
 deploy-preview: ## Deploy to preview (not configured)
 	@echo "No preview deployment — omon is a local CLI; use 'make dev' or 'make watch' to run locally."
 
-deploy-prod: _ensure-venv ## Build release artifacts (publish via GitHub Release; see PUBLISHING.md)
+deploy-prod: _ensure-venv ## Test, build, push, and publish (run after make bump-*)
 	@$(MAKE) check
 	$(PIP) install -q build
 	$(PYTHON) -m build
-	@echo ""
-	@echo "Built artifacts in dist/:"
-	@ls dist/
-	@echo ""
-	@echo "Publish: tag v$$(make -s version), push, then create a GitHub Release (see PUBLISHING.md)."
-	@echo "Homebrew: automatic on GitHub Release if HOMEBREW_TAP_TOKEN is set; else 'make homebrew-push' after push --tags."
+	@V=$$($(MAKE) -s version); \
+	git rev-parse "v$$V" >/dev/null 2>&1 || { \
+		echo "error: no tag v$$V — run 'make bump-patch' (or bump-minor / bump-major) first" >&2; \
+		exit 1; \
+	}; \
+	echo "Publishing v$$V..."; \
+	git push && git push --tags; \
+	gh release create "v$$V" --generate-notes; \
+	echo "Published v$$V (PyPI + Homebrew via CI)"
 
 # ── Homebrew tap ──────────────────────────────────────────────────────────────
 # Auto-bump on release: .github/workflows/homebrew.yml (needs HOMEBREW_TAP_TOKEN).
@@ -101,19 +104,6 @@ homebrew-push: homebrew-formula ## Copy formula to tap clone and push (HOMEBREW_
 		(git commit -m "omon $$V" && git push); \
 	echo "Pushed homebrew tap for v$$V"
 
-release: ## Print release checklist (version, PyPI, Homebrew)
-	@V=$$($(MAKE) -s version); \
-	echo "Release v$$V"; \
-	echo ""; \
-	echo "  1. make check && make deploy-prod   # optional smoke test"; \
-	echo "  2. git commit pending changes       # if any; bump only touches pyproject.toml + src/omon/__init__.py"; \
-	echo "  3. make bump-patch                  # or bump-minor / bump-major; commits version + tag"; \
-	echo "  4. git push && git push --tags"; \
-	echo "  5. gh release create v$$V --generate-notes   # triggers PyPI + Homebrew CI"; \
-	echo "  6. CI fallback: make homebrew-push V=$$V"; \
-	echo ""; \
-	echo "See PUBLISHING.md for PyPI trusted publisher and tap setup."
-
 # ── Versioning ────────────────────────────────────────────────────────────────
 
 version: ## Print current version
@@ -143,4 +133,4 @@ _release-commit:
 	@git diff --cached --quiet && { echo "error: nothing to commit after version bump" >&2; exit 1; } || true
 	@git commit -m "chore: release v$(V)"
 	@git tag -a "v$(V)" -m "Release v$(V)"
-	@echo "Released v$(V) — push with: git push && git push --tags"
+	@echo "Tagged v$(V) — run: make deploy-prod"

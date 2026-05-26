@@ -15,25 +15,21 @@ PyPI publishing is automated via GitHub Actions when you create a GitHub Release
 
 ## Publish a release
 
-Run `make release` for the full checklist. Typical flow:
-
 ```bash
-make check                          # optional: make deploy-prod for a local wheel smoke test
-git add -A && git commit -m "..."   # only if you have pending changes (see below)
+git add -A && git commit -m "..."   # only if you have pending changes
 make bump-patch                     # or bump-minor / bump-major
-git push && git push --tags
-gh release create v0.6.3 --generate-notes
+make deploy-prod
 ```
 
-`make bump-patch` (and minor/major) updates `pyproject.toml` and `src/omon/__init__.py`, **commits** them as `chore: release vX.Y.Z`, and **creates the annotated tag**. You do not need a separate commit for the version bump.
+`make bump-patch` updates `pyproject.toml` and `src/omon/__init__.py`, commits them, and creates tag `vX.Y.Z`.
 
-Commit anything else **before** bumping — `_release-commit` only stages those two version files.
+`make deploy-prod` runs tests, builds the wheel, pushes to GitHub, and creates the GitHub Release. That triggers `publish.yml` (PyPI) and `homebrew.yml` (tap).
 
-Creating the GitHub Release triggers `publish.yml` (PyPI via OIDC) and `homebrew.yml` (tap update when `HOMEBREW_TAP_TOKEN` is set).
+Commit anything else **before** bumping — bump only stages the two version files.
 
 ## Verify locally
 
-Optional smoke test before you tag — **does not require a tag or GitHub release**. CI builds the same way on publish.
+`make check` runs tests only. `make deploy-prod` runs tests + build before it pushes (after `make bump-*`).
 
 From the repo root (macOS often has `python3` but not `python`; `build` is not in the stdlib):
 
@@ -77,12 +73,7 @@ Default local clone path: `../OllamaMon_Homebrew_Tap` (override with `HOMEBREW_T
 
 ### Each release
 
-1. Commit pending changes on `main` (if any).
-2. `make bump-patch` — version commit + tag (no separate `git commit` for the bump).
-3. `git push && git push --tags`
-4. `gh release create vX.Y.Z --generate-notes` — CI updates PyPI and the tap via [`homebrew.yml`](.github/workflows/homebrew.yml).
-
-Or run `make release` for the numbered checklist.
+Commit pending changes (if any), then `make bump-patch` and `make deploy-prod`.
 
 ### Manual tap push (CI fallback)
 
